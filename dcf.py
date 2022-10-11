@@ -36,7 +36,7 @@ z = list(map(str,tickers.split(',')))
 # Assumed IRR (list of values)
 irr_ = [0.075, 0.1, 0.125]
 # No years in projection
-no_years_ = 5 # 5
+no_years_ = 10 # 5
 # No years for averaging ratios
 no_years_ratios_ = 5
 # No years for avg revenue growth
