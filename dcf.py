@@ -30,7 +30,7 @@ from datetime import datetime
 
 ### INPUT ###
 #input tickers creating a list with all input data
-path_ = "C:/Users/macie/OneDrive/Desktop/Invest/akcje/STOCKUS"
+path_ = ".../STOCKUS"
 tickers = input('Tickers (separated by ",": ')
 z = list(map(str,tickers.split(',')))
 # Assumed IRR (list of values)
@@ -62,7 +62,7 @@ for i in z:
     # Calculate YoY percentage growth
     input_to_DCF["RevenueGrowth"] = input_["Revenue"].pct_change(periods = 1)
     # Calculate as % of Revenue:
-    #  - EBITDA
+    # - EBITDA
     # - Depreciation
     # - Inventories
     # - Accounts Payable / Receivable
