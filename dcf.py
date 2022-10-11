@@ -30,13 +30,13 @@ from datetime import datetime
 
 ### INPUT ###
 #input tickers creating a list with all input data
-path_ = ".../STOCKUS"
+path_ = "C:/Users/macie/OneDrive/Desktop/Invest/akcje/STOCKUS"
 tickers = input('Tickers (separated by ",": ')
 z = list(map(str,tickers.split(',')))
 # Assumed IRR (list of values)
 irr_ = [0.075, 0.1, 0.125]
 # No years in projection
-no_years_ = 10 # 5
+no_years_ = 5 # 5
 # No years for averaging ratios
 no_years_ratios_ = 5
 # No years for avg revenue growth
@@ -56,28 +56,28 @@ for i in z:
     ### BUILD CASH FLOWS ###
     # Select variables needed in the DCF
     input_to_DCF = input_[["Revenue", "NetIncome", "EBITDA", "EBIT", "IncomeAfterTaxes", "TotalDepreciationAndAmortization-CashFlow", \
-                           "CashOnHand", "ChangeInAccountsReceivable", "ChangeInAccountsPayable", "NetChangeInPropertyPlantAndEquipment", "Inventory", \
+                           "CashOnHand","ChangeInInventories", "ChangeInAccountsReceivable", "ChangeInAccountsPayable", "NetChangeInPropertyPlantAndEquipment", "Inventory", \
                            "FreeCashFlowPerShare", "SharesOutstanding",\
                            "TotalLongTermLiabilities"]]
     # Calculate YoY percentage growth
     input_to_DCF["RevenueGrowth"] = input_["Revenue"].pct_change(periods = 1)
     # Calculate as % of Revenue:
-    # - EBITDA
+    #  - EBITDA
     # - Depreciation
     # - Inventories
     # - Accounts Payable / Receivable
     # - CAPEX
-    vars_as_perc = ["EBITDA", "EBIT", "IncomeAfterTaxes", "TotalDepreciationAndAmortization-CashFlow","ChangeInAccountsReceivable", "ChangeInAccountsPayable", "Inventory", "NetChangeInPropertyPlantAndEquipment"]
+    vars_as_perc = ["EBITDA", "EBIT", "IncomeAfterTaxes", "TotalDepreciationAndAmortization-CashFlow", "ChangeInInventories", "ChangeInAccountsReceivable", "ChangeInAccountsPayable", "Inventory", "NetChangeInPropertyPlantAndEquipment"]
     for n in vars_as_perc:
         input_to_DCF[n + "_in_perc_of_rev"] = input_to_DCF[n] / input_to_DCF["Revenue"]
     # Calculate a change in Inventory
-    input_to_DCF["ChangeinInventory"] = input_["Inventory"].transform('diff')
+    # input_to_DCF["ChangeinInventory"] = input_["Inventory"].transform('diff')
     # Calculate historical FCF from components and compare to FCF per share * No shares outstanding
     input_to_DCF["FCF_by_component"] = input_to_DCF["IncomeAfterTaxes"] + input_["TotalDepreciationAndAmortization-CashFlow"] + \
                                        input_to_DCF["ChangeInAccountsReceivable"] + input_to_DCF["ChangeInAccountsPayable"] + \
-                                       input_to_DCF["ChangeinInventory"] + input_to_DCF["NetChangeInPropertyPlantAndEquipment"]
+                                       input_to_DCF["ChangeInInventories"] + input_to_DCF["NetChangeInPropertyPlantAndEquipment"]
     
-    input_to_DCF["ChangeinInventory_in_perc_of_rev"] = input_to_DCF['ChangeinInventory'] / input_to_DCF["Revenue"]
+    # input_to_DCF["ChangeinInventory_in_perc_of_rev"] = input_to_DCF['ChangeinInventory'] / input_to_DCF["Revenue"]
     input_to_DCF["FCF_historical"] = input_to_DCF['FreeCashFlowPerShare'] * input_to_DCF['SharesOutstanding'] / 1000
     # print("FCF by component - FCF per share * No Shares: ", input_to_DCF["FCF_by_component"] - input_to_DCF["FCF_historical"])
     # Project revenue
@@ -97,21 +97,21 @@ for i in z:
     _avg_dep_ratio_ = np.average(input_to_DCF["TotalDepreciationAndAmortization-CashFlow_in_perc_of_rev"][-no_years_ratios_:])
     _avg_acc_rec_ratio_ = np.average(input_to_DCF["ChangeInAccountsReceivable_in_perc_of_rev"][-no_years_ratios_:])
     _avg_acc_pay_ratio_ = np.average(input_to_DCF["ChangeInAccountsPayable_in_perc_of_rev"][-no_years_ratios_:])
-    _avg_inv_ratio_ = np.average(input_to_DCF["ChangeinInventory_in_perc_of_rev"][-no_years_ratios_:])
+    _avg_inv_ratio_ = np.average(input_to_DCF["ChangeInInventories_in_perc_of_rev"][-no_years_ratios_:])
     _avg_capex_ratio_ = np.average(input_to_DCF["NetChangeInPropertyPlantAndEquipment_in_perc_of_rev"][-no_years_ratios_:])
     # Calculate projections per item
     DCF_proj["IncomeAfterTaxes"][proj_index] =  DCF_proj["Revenue"][proj_index] * _avg_inc_ratio_
     DCF_proj["TotalDepreciationAndAmortization-CashFlow"][proj_index] =  DCF_proj["Revenue"][proj_index] * _avg_dep_ratio_
     DCF_proj["ChangeInAccountsReceivable"][proj_index] =  DCF_proj["Revenue"][proj_index] * _avg_acc_rec_ratio_
     DCF_proj["ChangeInAccountsPayable"][proj_index] =  DCF_proj["Revenue"][proj_index] * _avg_acc_pay_ratio_
-    DCF_proj["ChangeinInventory"][proj_index] =  DCF_proj["Revenue"][proj_index] * _avg_inv_ratio_
+    DCF_proj["ChangeInInventories"][proj_index] =  DCF_proj["Revenue"][proj_index] * _avg_inv_ratio_
     DCF_proj["NetChangeInPropertyPlantAndEquipment"][proj_index] =  DCF_proj["Revenue"][proj_index] * _avg_capex_ratio_
     # Combine into FCF projection
     DCF_proj["FCF_by_component"][proj_index] = DCF_proj["IncomeAfterTaxes"][proj_index] + \
                                                DCF_proj["TotalDepreciationAndAmortization-CashFlow"][proj_index] + \
                                                DCF_proj["ChangeInAccountsReceivable"][proj_index] + \
                                                DCF_proj["ChangeInAccountsPayable"][proj_index] + \
-                                               DCF_proj["ChangeinInventory"][proj_index] + \
+                                               DCF_proj["ChangeInInventories"][proj_index] + \
                                                DCF_proj["NetChangeInPropertyPlantAndEquipment"][proj_index]
     # Discount based on different IRRs
     for r in irr_:
