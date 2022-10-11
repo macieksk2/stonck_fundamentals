@@ -20,7 +20,7 @@
 """
 ### 1. Scrap macrotrends
 # retrieve the HTML
-# Scraping all financial data available from MacroTrends website creating dataframes with 'pandas' and ploting data with 'matplotlib', written by Capuccino.
+# Scraping all financial data available from MacroTrends.net
 # packages
 import selenium
 from selenium import webdriver
