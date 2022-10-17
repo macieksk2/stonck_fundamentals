@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Oct 17 10:18:28 2022
+
+@author: D628748
+"""
+
 """
 DCF calculator:
     - Take revenues, net income, EBITDA from xls
@@ -62,6 +69,27 @@ run_table.loc["lng_term_gwth_"] =          [0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 
 run_table.loc["mos_"] =                    [0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15]
 ##############
 
+## Import share prices
+#import yfinance as yf
+#
+#out_ticker = pd.DataFrame(columns = ["Ticker", "Stock Price"])
+#
+#k = 0
+#for i in sp500_yf_tickers:
+#    print(i)
+#    #define the ticker symbol
+#    tickerSymbol = i
+#   
+#    #get data on this ticker
+#    tickerData = yf.Ticker(tickerSymbol)
+#   
+#    #get the historical prices for this ticker
+#    tickerDf = tickerData.history(period='1d')
+#   
+#    #see your data
+#    out_ticker = out_ticker.append({"Ticker": str(i), "Stock Price": tickerDf['Close'][0]}, ignore_index = True)
+#    k += 1
+#out_ticker.to_csv(os.path.join("STOCKUS/stock_prices.csv"))
 
 # Define output storing all the results
 out = pd.DataFrame(columns = ['Ticker', 'Revenue Growth', 'Margin of Safety'] + run_table.columns.tolist() + 
@@ -226,28 +254,22 @@ for i in z:
     out.to_csv(os.path.join(path_ + "/GOOGL/DCF_out.csv"))
    
  
+
+# Plot the fair prices along with the stock price as separate line
+i = "GOOGL"
+plt.rcdefaults()
+fig, ax = plt.subplots()
+
+# Example data
+y_pos = np.arange(len(out.columns[3:-1]))
+ax.barh(y_pos, out[out.columns[3:-1].tolist()].iloc[z.index(i)], align='center')
+ax.set_yticks(y_pos, )
+ax.set_yticklabels(out.columns[3:-1].tolist())
+ax.invert_yaxis()  # labels read top-to-bottom
+ax.set_xlabel('Fair value after margin of safety')
+ax.set_title('How much the stock should be worth?')
+# Plot vertical line equal to stock price
+plt.axvline(x=out.at[z.index(i),'Stock price'], color = "r")
+plt.show()
     
-
-## Import share prices
-#import yfinance as yf
-#
-#out_ticker = pd.DataFrame(columns = ["Ticker", "Stock Price"])
-#
-#k = 0
-#for i in sp500_yf_tickers:
-#    print(i)
-#    #define the ticker symbol
-#    tickerSymbol = i
-#   
-#    #get data on this ticker
-#    tickerData = yf.Ticker(tickerSymbol)
-#   
-#    #get the historical prices for this ticker
-#    tickerDf = tickerData.history(period='1d')
-#   
-#    #see your data
-#    out_ticker = out_ticker.append({"Ticker": str(i), "Stock Price": tickerDf['Close'][0]}, ignore_index = True)
-#    k += 1
-#out_ticker.to_csv(os.path.join("STOCKUS/stock_prices.csv"))
-
 
