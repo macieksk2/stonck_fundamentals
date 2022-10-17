@@ -1,0 +1,92 @@
+# 'EVERSOURCE'# ES
+# ON -> not present in database
+# 'DUPONT' # DD
+# 'GARTNER' # IT
+# 'CF INDUSTRIES HOLDINGS', # CF
+# 'FIRSTENERGY' #FE
+# 'INGERSOLL' # IR
+# 'KELLOGG' #K
+# 'LABORATORY' # LH
+# 'REGIONS' # RF
+# 'BROADRIDGE' # BR
+# 'FORMAN' # BF.B
+# 'LAMB ' # LW
+# 'INTERNATIONAL PAPER' # IP
+# CBOE > not in the database
+# 'JACOBS' # J
+# 'EVEREST' # RE
+# 'LOEWS' # L 
+# 'NISOURCE' # NIg
+# 'CELANESE' # CE
+# 'RALPH' # RL
+# 'WEYERHAEUSER' # WY
+# 'GLOBE' # GL
+# ALL - no cash flow statement, think later how to handle
+# 'ALL'
+# 'BERKSHIRE' -> 'BRK.B'
+# "CITIGROUP" -> CITI
+# 'AT&T' -> not in database
+# SP 500 tickers
+sp500_tickers = ['GOOGL','AAPL','MSFT','XOM','JPM','JNJ','BERKSHIRE','AMZN','TSLA','UNH','PROCTER','META','VISA','HOME',
+                  'NVDA','CVX','LLY','ABBV','MASTERCARD','PFE','MRK','PEP','COCA','COST','BAC','TMO','WMT','ABT','MCD','AVGO',
+                  'DIS','DHR','CSCO','ACN','WFC','VERIZON','NEE','BMY','COP','CRM','TXN','LIN','ADBE','PHILIP','AMGN','CMCSA',
+                  'LOW','RTX','QCOM','UNP','HON','UPS','CVS','ELV','NKE','SCHW','MDT','INTU','IBM',
+                  'MORGAN STANLEY','INTC','DEERE','SPGI','GOLDMAN','SBUX','LMT','PYPL','NFLX','CAT','ORCL','ADP','AMD','PLD','CIGNA',
+                  'AMT','TMUS','AXP','GILD','BLK','ALTRIA','REGN','CITIGROUP','CHUBB','MDLZ','MMC','VRTX','TJX','NOW','NOC','BOEING',
+                  'ADI','PGR','EOG','TGT','SYK','GENERAL ELECTRIC','DUK','ZTS','SOUTHERN','ISRG','AMAT','BKNG','BDX','HUM','FISV','CME',
+                  'PNC','MMM','MICRON','SLB','WASTE','PXD','AON','COLGATE','CCI','CSX','BSX','TFC','DOLLAR GENERAL','ETN','DOMINION','USB',
+                  'ITW','ATVI','MPC','GENERAL DYNAMICS','APD','EDWARDS LIFESCIENCES','ICE','MCK','NSC','ESTEE','ADM','SHW',
+                  'OXY','EQIX','GENERAL MOTORS','ORLY','EMR','GIS','SRE','PSA','FORD','FIS','DVN','LRCX','LHX','AZO','CTVA','HCA','AEP','PSX',
+                  'VLO','CNC','MET','SNPS','FCX','ADSK','CMG','MRNA','CDNS','APH','KLAC','DXCM','ROP','MAR','MCO','NXPI','TRV',
+                  'AGILENT','MSI','KMB','SYY','EXC','AJG','BIIB','AIG','WMB','FDX','COF','REALTY','STZ','ECL','JCI','TEL','ENPH',
+                  'MNST','PAYX','HES','CHTR','TRANE','PRU','KMI','CTAS','TWTR','AFL','HSY','NEM','MCHP','PARKER','HLT','XEL','MSCI',
+                  'IQV','KDP','FTNT','ALB','DOW','ELECTRONIC ARTS','MTB','CMI','RMD','NUE','ILMN','SPG','PCAR','ROST','YUM','DLTR','GPN',
+                  'KROGER','CTSH','CARR','VICI','AMP','CSGP','CONSOLIDATED EDISON','NEW YORK MELLON','KEYS','BAX','KHC','SBAC','PEG','OTIS','IDXX','WELL','TDG',
+                  'CEG','RSG','WEC','VRSK','HAL','FAST','ANET','AME','PPG','ROK','DUPONT','DLR','EVERSOURCE','WBD','MTD','DFS','FANG',
+                  'ODFL','AVB','FRC','OKE','TROW','GWW','CPRT','WBA','CTRA','DHI','AWK','GARTNER','GLW','PCG','HPQ','BKR','WTW',
+                  'ZBH','EXR','TSCO','GPC','CBRE','STT','ABC','FITB','APTV','WEYERHAEUSER','IFF','EIX','EQR','FTV','HIG','ULTA','CDW',
+                  'VMC','MOH','ETR','CF INDUSTRIES HOLDINGS','DTE','EBAY','RJF','LEN','FIRSTENERGY','ARE','AEE','LYB','EFX','NDAQ','MLM','SIVB','URI','CAH',
+                  'INVH','HBAN','REGIONS','MKC','TSN','LABORATORY','PPL','LUV','EPAM','PWR','MRO','DAL','INGERSOLL','KELLOGG','TTWO','PFG','WST','CHD',
+                  'NTRS','ANSS','MOS','DOV','CFG','STE','MAA','CNP','WAT','BROADRIDGE','VRSN','AES','AMCR','CAG','CMS','XYL','EQT',
+                  'HPE','DRI','WAB','CLX','FDS','HOLX','IEX','TDY','CINF','BALL','PAYC','SJM','ALGN','PKI','SYF','TRGP','DGX',
+                  'VTR','ESS','MPWR','EXPD','KEY','JACOBS','BRO','WRB','ATO','FMC','NTAP','EXPE','AVY','JBHT','OMC','JKHY','TYL',
+                  'HRL','ETSY','SWKS','IRM','MTCH','APA','LKQ','TRMB','CTLT','EVRG','TXT','ZBRA','BBY','NVR','FLT','LDOS',
+                  'POOL','AKAM','INCY','COO','LNT','HWM','GRMN','CPT','NLOK','LVS','PEAK','FORMAN','LAMB','INTERNATIONAL PAPER','CHRW',
+                  'HST','TER','KIM','NDSN','SWK','UDR','VTRS','PTC','SEDG','SNA','DPZ','LYV','MAS','ABMD','TECH','WDC','UAL',
+                  'PKG','EVEREST','AAP','STX','IPG','KMX','LOEWS','NISOURCE','BXP','MGM','GLOBE','CPB','CRL','NRG','GNRC','PHM','HSIC',
+                  'FOXA','HII','VFC','SBNY','PARA','CMA','CELANESE','RCL','TAP','EMN','TFX','RHI','MKTX','HAS','CDAY','REG','JNPR',
+                  'BIO','FFIV','WRK','ALLE','BBWI','QRVO','ROL','WHR','AIZ','AAL','BWA','TPR','CZR','ZION','FBHS','LNC','PNW',
+                  'PNR','SEE','AOS','CCL','IVZ','FRT','WYNN','DXC','UHS','LUMN','XRAY','NWSA','OGN','BEN','NWL','ALK','MHK',
+                  'DVA','NCLH','FOX','RALPH','DISH','VNO','NWS']
+
+sp500_yf_tickers = ['GOOGL','AAPL','MSFT','XOM','JPM','JNJ','BRK-B','AMZN','TSLA','UNH','PG','META','V','HD',
+                  'NVDA','CVX','LLY','ABBV','MA','PFE','MRK','PEP','KO','COST','BAC','TMO','WMT','ABT','MCD','AVGO',
+                  'DIS','DHR','CSCO','ACN','WFC','VZ','NEE','BMY','COP','CRM','TXN','LIN','ADBE','PM','AMGN','CMCSA',
+                  'LOW','RTX','QCOM','UNP','HON','UPS','CVS','ELV','NKE','SCHW','MDT','INTU','IBM',
+                  'MS','INTC','DE','SPGI','GS','SBUX','LMT','PYPL','NFLX','CAT','ORCL','ADP','AMD','PLD','CI',
+                  'AMT','TMUS','AXP','GILD','BLK','MO','REGN','C','CB','MDLZ','MMC','VRTX','TJX','NOW','NOC','BA',
+                  'ADI','PGR','EOG','TGT','SYK','GE','DUK','ZTS','SO','ISRG','AMAT','BKNG','BDX','HUM','FISV','CME',
+                  'PNC','MMM','MU','SLB','WM','PXD','AON','CL','CCI','CSX','BSX','TFC','DG','ETN','D','USB',
+                  'ITW','ATVI','MPC','GD','APD','EW','ICE','MCK','NSC','EL','ADM','SHW',
+                  'OXY','EQIX','GM','ORLY','EMR','GIS','SRE','PSA','FORD','FIS','DVN','LRCX','LHX','AZO','CTVA','HCA','AEP','PSX',
+                  'VLO','CNC','MET','SNPS','FCX','ADSK','CMG','MRNA','CDNS','APH','KLAC','DXCM','ROP','MAR','MCO','NXPI','TRV',
+                  'A','MSI','KMB','SYY','EXC','AJG','BIIB','AIG','WMB','FDX','COF','O','STZ','ECL','JCI','TEL','ENPH',
+                  'MNST','PAYX','HES','CHTR','TT','PRU','KMI','CTAS','TWTR','AFL','HSY','NEM','MCHP','PH','HLT','XEL','MSCI',
+                  'IQV','KDP','FTNT','ALB','DOW','EA','MTB','CMI','RMD','NUE','ILMN','SPG','PCAR','ROST','YUM','DLTR','GPN',
+                  'KR','CTSH','CARR','VICI','AMP','CSGP','ED','BK','KEYS','BAX','KHC','SBAC','PEG','OTIS','IDXX','WELL','TDG',
+                  'CEG','RSG','WEC','VRSK','HAL','FAST','ANET','AME','PPG','ROK','DD','DLR','ES','WBD','MTD','DFS','FANG',
+                  'ODFL','AVB','FRC','OKE','TROW','GWW','CPRT','WBA','CTRA','DHI','AWK','IT','GLW','PCG','HPQ','BKR','WTW',
+                  'ZBH','EXR','TSCO','GPC','CBRE','STT','ABC','FITB','APTV','WY','IFF','EIX','EQR','FTV','HIG','ULTA','CDW',
+                  'VMC','MOH','ETR','CF','DTE','EBAY','RJF','LEN','FE','ARE','AEE','LYB','EFX','NDAQ','MLM','SIVB','URI','CAH',
+                  'INVH','HBAN','RF','MKC','TSN','LH','PPL','LUV','EPAM','PWR','MRO','DAL','IR','K','TTWO','PFG','WST','CHD',
+                  'NTRS','ANSS','MOS','DOV','CFG','STE','MAA','CNP','WAT','BR','VRSN','AES','AMCR','CAG','CMS','XYL','EQT',
+                  'HPE','DRI','WAB','CLX','FDS','HOLX','IEX','TDY','CINF','BALL','PAYC','SJM','ALGN','PKI','SYF','TRGP','DGX',
+                  'VTR','ESS','MPWR','EXPD','KEY','J','BRO','WRB','ATO','FMC','NTAP','EXPE','AVY','JBHT','OMC','JKHY','TYL',
+                  'HRL','ETSY','SWKS','IRM','MTCH','APA','LKQ','TRMB','CTLT','EVRG','TXT','ZBRA','BBY','NVR','FLT','LDOS',
+                  'POOL','AKAM','INCY','COO','LNT','HWM','GRMN','CPT','NLOK','LVS','PEAK','BF-B','LW','IP','CHRW',
+                  'HST','TER','KIM','NDSN','SWK','UDR','VTRS','PTC','SEDG','SNA','DPZ','LYV','MAS','ABMD','TECH','WDC','UAL',
+                  'PKG','RE','AAP','STX','IPG','KMX','L','NI','BXP','MGM','GL','CPB','CRL','NRG','GNRC','PHM','HSIC',
+                  'FOXA','HII','VFC','SBNY','PARA','CMA','CE','RCL','TAP','EMN','TFX','RHI','MKTX','HAS','CDAY','REG','JNPR',
+                  'BIO','FFIV','WRK','ALLE','BBWI','QRVO','ROL','WHR','AIZ','AAL','BWA','TPR','CZR','ZION','FBHS','LNC','PNW',
+                  'PNR','SEE','AOS','CCL','IVZ','FRT','WYNN','DXC','UHS','LUMN','XRAY','NWSA','OGN','BEN','NWL','ALK','MHK',
+                  'DVA','NCLH','FOX','RL','DISH','VNO','NWS']
