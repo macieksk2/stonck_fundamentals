@@ -9,7 +9,16 @@ DCF calculator:
     - Deduct Debt
     - Divide by number of shares to obtain fair value
     - Account for margin of safety
-    -
+
+STOCK Screener:
+ Add functionality to filter database based on
+ - Last n years revenue growth
+ - Last n years income growth
+ - Last n years min RoE/RoA
+ - Debt-to-Equity
+ - Last n years Shares Outstanding change
+ - Current Ratio in the LP and last n years (dynamics)
+ - Last n year FCF growth
 """
 ### DCF calculator
 # packages
@@ -26,10 +35,10 @@ from datetime import date
 from datetime import datetime
 import yfinance as yf
 import psycopg2 as pg
-### FUNCTIONS ###
+### FUNCTIONS ######################################################################
 # TBD
 
-### INPUT ###
+### INPUT ##########################################################################
 #input tickers creating a list with all input data
 path_ = ".../STOCKUS"
 os.chdir(path_)
@@ -52,7 +61,7 @@ run_table = pd.DataFrame(columns = ['RUN_1', 'RUN_2', 'RUN_3', 'RUN_4',
                          index = ['IRR', 'no_years_proj_', 'no_years_ratios_', '_avg_inc_ratio_shock_',
                                     'no_years_rev_gwth_', '_rev_gwth_shock_', '_avg_capex_ratio_shock_',
                                     'lng_term_gwth_', 'mos_'])
-# IRR
+# Parameters per run
 run_table.loc["IRR"] =                     [0.1, 0.075, 0.125, 0.1, 0.1, 0.1, 0.1, 0.1]
 run_table.loc["no_years_proj_"] =          [10, 10, 10, 5, 10, 10, 10, 10]
 run_table.loc["no_years_ratios_"] =        [10, 10, 10, 10, 5, 10, 10, 10]
@@ -63,12 +72,42 @@ run_table.loc["_avg_capex_ratio_shock_"] = [1, 1, 1, 1, 1, 1, 1, 2]
 run_table.loc["lng_term_gwth_"] =          [0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02]
 run_table.loc["mos_"] =                    [0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15]
 # Database settings
-do_from_sql = False
+do_from_sql = True
 database_name_ = "sp500"
 table_name_ = "sp500_v2"
 password_ = "..."
 
-##############
+# Stock screener params
+# Flags switching on/off the params
+do_min_avg_rev_gwth_ = True
+do_min_avg_inc_gwth_ = True
+do_min_roe_ = True
+do_min_roa_ = True
+do_max_de_ = True
+do_max_chg_shs_out_ = True
+do_min_crr_rt = True
+do_min_avg_fcf_gwth = True
+# - Last n years revenue growth
+_min_avg_rev_gwth_ = 0.05
+_min_avg_rev_gwth_n_yrs = 10
+# - Last n years income growth
+_min_avg_inc_gwth_ = 0.05
+_min_avg_inc_gwth_n_yrs = 10
+# - min RoE/RoA
+_min_roe_ = 0.1
+_min_roa_ = 0.03
+# - max Debt-to-Equity
+_max_de_ = 1.0
+# - Last n years Shares Outstanding change
+_max_chg_shs_out_ = 0.0
+_max_chg_shs_out_last_n_years = 10
+# - Current Ratio in the LP
+_min_crr_rt = 1.0
+# - Last n year FCF growth
+_min_avg_fcf_gwth = 0.05
+_min_avg_fcf_gwth_n_yrs = 10
+# - Comparison of current stock to the estimates
+############## VALUATION ######################################################
 
 ## Import share prices
 out_ticker = pd.DataFrame(columns = ["Ticker", "Stock Price"])
@@ -156,13 +195,14 @@ for i in z:
         input_to_DCF[n] = input_to_DCF[n].astype(float)
         input_to_DCF[n + "_in_perc_of_rev"] = input_to_DCF[n] / input_to_DCF["revenue"]
     # Calculate historical FCF from components and compare to FCF per share * No shares outstanding
-    input_to_DCF["fcf_by_component"] = input_to_DCF["incomeaftertaxes"] + input_to_DCF["totaldepreciationandamortizationcashflow"] + \
-                                       input_to_DCF["changeinaccountsreceivable"] + input_to_DCF["changeinaccountspayable"] + \
-                                       input_to_DCF["changeininventories"] + input_to_DCF["netchangeinpropertyplantandequipment"]
+    input_to_DCF["fcf_by_component"] = input_to_DCF["incomeaftertaxes"] + \
+                                       input_to_DCF["totaldepreciationandamortizationcashflow"] + \
+                                       input_to_DCF["changeinaccountsreceivable"] + \
+                                       input_to_DCF["changeinaccountspayable"] + \
+                                       input_to_DCF["changeininventories"] + \
+                                       input_to_DCF["netchangeinpropertyplantandequipment"]
    
-    # input_to_DCF["Changeininventory_in_perc_of_rev"] = input_to_DCF['Changeininventory'] / input_to_DCF["revenue"]
     input_to_DCF["FCF_historical"] = input_to_DCF['freecashflowpershare'] * input_to_DCF['sharesoutstanding'] / 1000
-    # print("FCF by component - FCF per share * No Shares: ", input_to_DCF["fcf_by_component"] - input_to_DCF["FCF_historical"])
 
     for j in range(len(run_table.columns)):
         # Define parameters for a specific run
@@ -244,7 +284,7 @@ for i in z:
         out.at[z.index(i), str('RUN_') + str(j + 1)] = share_price_aft_mos
     # Add new valuation options:
     input_["epsearningspershare"]      = input_["epsearningspershare"].astype(float)
-    input_["bookvaluepershare"]        = input_["bookvaluepershare"].astype(float)
+    input_["bookvaluepershare"]        =  input_["bookvaluepershare"].astype(float)
     input_["revenue"]                  = input_["revenue"].astype(float)
     input_["sharesoutstanding"]        = input_["sharesoutstanding"].astype(float)
     input_["totalcurrentassets"]       = input_["totalcurrentassets"].astype(float)
@@ -273,7 +313,6 @@ for i in z:
     # (Curr Assets - Tot Liab) / No Shares
     val_ca_min_totliab = (input_["totalcurrentassets"][-1] - input_["totalliabilities"][-1]) / input_["sharesoutstanding"][-1]
    
-    # Discount based on different IRRs
     out.at[z.index(i),'P/E = 10']  = float(val_pe_10)
     out.at[z.index(i),'P/E = 15']  = float(val_pe_15)
     out.at[z.index(i),'P/E = 20']  = float(val_pe_20)
@@ -310,6 +349,107 @@ print("***************************************")
 
 # write to csv
 out.to_csv(os.path.join(path_ + "/DCF_out.csv"))
-   
- 
+
+
+################# STOCK SCREENER ######################################
+
+# Create a ticker column
+if do_from_sql:
+    query_results['ticker'] = [x[:x.find('-')] for x in query_results['date_ticker']]
+    # Get unique tickers
+    uniq_tck = np.unique(query_results["ticker"])
+    # Create DataFrame with metrics
+    uniq_mtrcks = pd.DataFrame(columns = ['Avg Rev Gwth', 'Avg Income Gwth', 'RoE_RoA',
+                                        'Debt_Equity', 'Shares_Outstanding_chg', 'Curr_Ratio', 'FCF Gwth'], 
+                             index = uniq_tck)
+    # - Last n years revenue growth
+    if do_min_avg_rev_gwth_ == True:
+        uniq_mtrcks['Avg Rev Gwth'] = [float(np.average(query_results[query_results['ticker'] == uniq_tck[x]]["revenue"].astype(float).pct_change(periods = 1)[-_min_avg_rev_gwth_n_yrs:])) > _min_avg_rev_gwth_ \
+                                        if len(query_results[query_results['ticker'] == uniq_tck[x]]) >= _min_avg_rev_gwth_n_yrs \
+                                           and float(np.array(query_results[query_results['ticker'] == uniq_tck[x]]["revenue"])[-_min_avg_rev_gwth_n_yrs]) > 0 \
+                                        else "-"
+                                        for x in range(len(uniq_tck))]
+        # Filter out
+        uniq_mtrcks = uniq_mtrcks[uniq_mtrcks['Avg Rev Gwth'] == True]
+    # - Last n years income growth
+    if do_min_avg_inc_gwth_ == True:
+        uniq_mtrcks['Avg Income Gwth'] = [float(np.average(query_results[query_results['ticker'] == uniq_mtrcks.index[x]]["netincome"].astype(float).pct_change(periods = 1)[-_min_avg_inc_gwth_n_yrs:])) > _min_avg_inc_gwth_ \
+                                            if len(query_results[query_results['ticker'] == uniq_mtrcks.index[x]]) >= _min_avg_inc_gwth_n_yrs \
+                                             and float(np.array(query_results[query_results['ticker'] == uniq_mtrcks.index[x]]["netincome"])[-1]) > 0
+                                            else "-"
+                                            for x in range(len(uniq_mtrcks))]
+        # Filter out
+        uniq_mtrcks = uniq_mtrcks[uniq_mtrcks['Avg Income Gwth'] == True]        
+    # - Min RoE/RoA
+    if do_min_roe_ == True:
+        uniq_mtrcks['RoE_RoA'] = [(float(np.array(query_results[query_results['ticker'] == uniq_mtrcks.index[x]]["roereturnonequity"])[-1]) > _min_roe_ * 100 \
+                                            and float(np.array(query_results[query_results['ticker'] == uniq_mtrcks.index[x]]["roareturnonassets"])[-1]) > _min_roa_ * 100)
+                                            for x in range(len(uniq_mtrcks))]
+        # Filter out
+        uniq_mtrcks = uniq_mtrcks[uniq_mtrcks['RoE_RoA'] == True] 
+    # - max Debt-to-Equity
+    if do_max_de_ == True:
+        uniq_mtrcks['Debt_Equity'] = [(float(np.array(query_results[query_results['ticker'] == uniq_mtrcks.index[x]]['debtequityratio'])[-1]) < _max_de_)
+                                            for x in range(len(uniq_mtrcks)) \
+                                            if float(np.array(query_results[query_results['ticker'] == uniq_mtrcks.index[x]]["shareholderequity"])[-1]) > 0]
+        # Filter out
+        uniq_mtrcks = uniq_mtrcks[uniq_mtrcks['Debt_Equity'] == True] 
+    # - Last n years Shares Outstanding change
+    if do_max_chg_shs_out_ == True:
+        uniq_mtrcks['Shares_Outstanding_chg'] = [(float(np.array(query_results[query_results['ticker'] == uniq_mtrcks.index[x]]['sharesoutstanding'])[-1]) - \
+                                                  float(np.array(query_results[query_results['ticker'] == uniq_mtrcks.index[x]]["sharesoutstanding"])[-_max_chg_shs_out_last_n_years]) < _max_chg_shs_out_)
+                                                  for x in range(len(uniq_mtrcks))]
+        # Filter out
+        uniq_mtrcks = uniq_mtrcks[uniq_mtrcks['Shares_Outstanding_chg'] == True] 
+    # - Current Ratio in the LP
+    if do_min_crr_rt == True:
+        uniq_mtrcks['Curr_Ratio'] = [(float(np.array(query_results[query_results['ticker'] == uniq_mtrcks.index[x]]['currentratio'])[-1]) > _min_crr_rt)
+                                                  for x in range(len(uniq_mtrcks))]
+        # Filter out
+        uniq_mtrcks = uniq_mtrcks[uniq_mtrcks['Curr_Ratio'] == True] 
+        
+    # - Last n year FCF growth
+    if do_min_avg_fcf_gwth == True:
+        # Calc FCF by component
+        query_results["fcf_by_component"] = query_results["incomeaftertaxes"].astype(float) + \
+                                                   query_results["totaldepreciationandamortizationcashflow"].astype(float) + \
+                                                   query_results["changeinaccountsreceivable"].astype(float) + \
+                                                   query_results["changeinaccountspayable"] .astype(float)+ \
+                                                   query_results["changeininventories"].astype(float) + \
+                                                   query_results["netchangeinpropertyplantandequipment"].astype(float)
+        query_results["fcf_by_component_per_share"] = [query_results["fcf_by_component"][x].astype(float) / float(query_results["sharesoutstanding"][x]) for x in range(len(query_results))]
+                                                   
+                                                   
+        uniq_mtrcks['FCF Gwth'] = [float(np.average(query_results[query_results['ticker'] == uniq_mtrcks.index[x]]["fcf_by_component_per_share"].astype(float).pct_change(periods = 1)[-_min_avg_fcf_gwth_n_yrs:])) > _min_avg_fcf_gwth \
+                                            if len(query_results[query_results['ticker'] == uniq_mtrcks.index[x]]) >= _min_avg_fcf_gwth_n_yrs \
+                                             and float(np.array(query_results[query_results['ticker'] == uniq_mtrcks.index[x]]["fcf_by_component_per_share"])[-1]) > 0
+                                            else "-"
+                                            for x in range(len(uniq_mtrcks))]
+        # Filter out
+        uniq_mtrcks = uniq_mtrcks[uniq_mtrcks['FCF Gwth'] == True]   
+        
+        # - Comparison of current stock to the estimates
+        
+        # Filter stocks fulfilling both fundamental and valuation criteria
+        val_columns = run_table.columns.tolist() + \
+                                     ['P/E = 10', 'P/E = 15', 'P/E = 20',
+                                      'P/B = 1', 'P/B = 1.5', 'P/B = 2',
+                                      'P/S = 1', 'P/S = 3', 'P/S = 5',
+                                      'NCAV']
+        print("Filter stocks fulfilling both fundamental and valuation criteria: ")
+        for c in val_columns:
+            # Merge to the filtered fundamentals to check wchi stock fulfills all criteria
+            stocks_underval = out[out[c] > out["Stock price"]]['ticker']
+            print("Criterium: ", str(c))
+            print(list(set(uniq_mtrcks.index).intersection(stocks_underval)))
+
+# (For later) Customize method of estimation to company type
+# E.g. Bank - rather P/B
+# Dividend stocks - maybe some Discounted dividend model
+# Growth stocks - different assumptiosn on growth
+# DCF - well established companies
+# etc
+
+ ######################################################################
+
 
