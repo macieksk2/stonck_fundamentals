@@ -1,3 +1,50 @@
+###############################################################################################################
+1.8	What is arbitrage?
+1.9	Delta hedging
+1.10	Risk neutral measure
+1.11	Girsanov theorem
+1.12	Black Scholes
+1.13	What is put-call parity?
+1.14	Greeks
+1.15	Volatility smile
+1.16	Monte Carlo simulation
+1.17	Why do quants like closed-form solutions? 
+1.18	What are the forward and backward equations?
+1.19	What is meant by ‘complete’ and ‘incomplete’ markets?
+1.20	Interest rate modelling (Hull White, Vasicek, Ho Lee, …)
+1.21	XVA, CVA modelling
+
+2.1	OLS
+2.2	Logistic
+2.3	ARMA/ARIMA/SARIMA/ARMAX
+2.4	ARDL
+2.5	Mean-variance trade-off
+2.6	Training / testing sample
+2.7	Classification measures (recall, sensitivity, F1 score, confusion matrix)
+2.8	VAR 
+2.9	ARCH / GARCH
+2.10	Cointergration
+2.11	Kalman Filtering 
+2.12	Signal Processing 
+2.13	Random Forrest
+2.14	XGBoost
+
+PYTHON:
+15.1	Data structures like arrays/DataFrame/dictionary/tuple/list,
+15.2	Sorting algorithms
+15.3	Other algorithms, algorithm efficiency
+15.4	loc/iloc
+15.5	What is a set function?
+15.6	Can you add a list to the dictionary?
+15.7	What does x[-1] do?
+15.8	What does x[::-1] do?
+15.9	OOP – classes/inheritance
+15.10	What is a function of “_init” in OOP?
+15.11	What is a decorator?
+15.12	Github/Git commit/push
+15.13	Multithreading
+
+###############################################################################################################
 https://www.drwealth.com/deep-value-play-chinese-stocks/
 BABA
 Tencent
