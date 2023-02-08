@@ -2,14 +2,18 @@
 # Pytania SQL
 # Pytania R
 # Kontynuacja pytań Python
-# Zrozumiec LCR / NSFR na przykladach
+# Zrozumiec LCR / NSFR / Liquidity Mismatch na przykladach
 # VaR - backtesting, ES, trzy sposoby estymacji na przykladach:
 https://www.youtube.com/watch?v=VSfOeEkNmKQ (kanał NEDL)
 # balance sheet optimization  / ALM behavioral models - co to może być?
 # HSBC -> poza VaRem, poczytać o teorii portfela (równiez kanal NEDL)
 
-
-
+Links:
+https://www.youtube.com/watch?v=qLpjZBPcVsE
+http://umu.diva-portal.org/smash/get/diva2:1333774/FULLTEXT01.pdf
+https://www.bis.org/events/conf140909/bai_krishnamurthy_weymuller_paper.pdf
+https://www.finalyse.com/blog/non-maturity-deposit-modelling
+https://www.bis.org/publ/bcbs238.pdf
 
 https://arxiv.org/pdf/2301.09996.pdf
 Assessing the Risk Characteristics of the Cryptocurrency Market: A GARCH-EVT-Copula Approach
